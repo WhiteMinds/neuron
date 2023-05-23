@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Restore
         uses: actions/cache@v3
@@ -44,7 +44,7 @@ jobs:
         if: matrix.os == 'windows-2019'
         uses: microsoft/setup-msbuild@v1.3.1
         env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
 
       - name: Install libudev
         if: matrix.os == 'ubuntu-20.04'
@@ -64,8 +64,12 @@ jobs:
       - name: Package for MacOS
         if: matrix.os == 'macos-latest'
         run: |
-          ./scripts/download-ckb.sh mac
-          yarn package:test mac
+          if [ "${{ secrets.APPLE_ID }}" != '' ]; then
+            ./scripts/download-ckb.sh mac
+            yarn package:test mac
+          else
+            echo "Package for MacOS need secrets";
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
